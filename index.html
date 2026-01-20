@@ -16,7 +16,7 @@
   }
 
   /* ---------------------------------------------------
-     HELL-MODUS (boothard)
+     HELL-MODUS
   --------------------------------------------------- */
   :root {
     --highlight-border: #cc0000;
@@ -37,7 +37,6 @@
      DARK-MODUS
   --------------------------------------------------- */
   .dark {
-
     --highlight-border: #ff5757;
     --highlight-bg: #3b1f1f;
 
@@ -45,10 +44,10 @@
     --text: #e6e6e6;
     --box-bg: #2a2a2a;
 
-    --pass-bg: #1f3b1f;   /* dunkles Grün */
+    --pass-bg: #1f3b1f;
     --pass-border: #00ff76;
 
-    --fail-bg: #3b1f1f;   /* dunkles Rot */
+    --fail-bg: #3b1f1f;
     --fail-border: #ff5757;
   }
 
@@ -106,12 +105,11 @@
     color: #fff;
   }
 
-  #protocol { display: none; }
-
-  input[type="text"], select {
+  input[type="text"], input[type="password"], select {
     padding: 6px;
     border-radius: 5px;
     border: 1px solid #ccc;
+    width: 200px;
   }
 
   #login { text-align: center; margin-bottom: 20px; }
@@ -127,9 +125,6 @@
 
   .hidden { display: none; }
 
-  /* ---------------------------------------------------
-     RESULTBOX – jetzt komplett Dark-Mode kompatibel
-  --------------------------------------------------- */
   #resultBox {
     border-radius: 12px;
     padding: 20px;
@@ -169,12 +164,12 @@
   <h1>Security-Test</h1>
 
   <div id="login">
-    <label>Personnel number: </label>
-    <input type="text" id="personalnummer" maxlength="5" pattern="\d{5}" required>
+    <label>Personnel number: </label><br>
+    <input type="text" id="personalnummer" maxlength="5" pattern="\d{5}" required placeholder="e.g. 12345">
 
     <br><br>
 
-    <label>Select quiz package:</label>
+    <label>Select quiz package:</label><br>
     <select id="quizSelect">
       <option value="auto">Automatically (randomly)</option>
       <option value="0">Quiz package 1</option>
@@ -184,52 +179,47 @@
 
     <br><br>
 
-	<div id="pwContainer" style="display:none;">
-  <label>Password:</label>
-  <input type="password" id="quizPassword" placeholder="Enter password" maxlength="20">
-</div>
+    <div id="pwContainer">
+      <label>Access Password:</label><br>
+      <input type="password" id="quizPassword" placeholder="Enter password" maxlength="20">
+    </div>
 
     <button class="btn" onclick="startQuiz()">Go!</button>
     <button id="devDownload" class="btn" style="position: fixed; bottom: 20px; right: 20px; font-size: 0.9em;" onclick="downloadXML()">📥 XML Export</button>
   </div>
 
-
   <div id="rules" class="quiz-section">
     <h2>Rules</h2>
-    <center><strong><p>1.  Each question can only be answered with one option.</p></strong><center>
-	<p>•</p>
-    <strong><p>2.  When you have finished your test, you must report to your supervisor.</p></strong>
-	<p>•</p>
-    <strong><p>3.  Taking photos of the questions or using your cell phone is prohibited.</p></strong>
-	<p>•</p>
-    <strong><p>4.  It is forbidden to talk to other students during the test.</p></strong>
-	<p>•</p>
-    <strong><p>5.  You must answer all questions to complete the test.</p></strong></center>
-	<p>•</p>
-    <strong><p>    Stand: 20.01.2026</p></strong></center>
+    <center>
+      <p><strong>1. Each question can only be answered with one option.</strong></p>
+      <p>•</p>
+      <p><strong>2. When you have finished your test, you must report to your supervisor.</strong></p>
+      <p>•</p>
+      <p><strong>3. Taking photos of the questions or using your cell phone is prohibited.</strong></p>
+      <p>•</p>
+      <p><strong>4. It is forbidden to talk to other students during the test.</strong></p>
+      <p>•</p>
+      <p><strong>5. You must answer all questions to complete the test.</strong></p>
+      <p>•</p>
+      <p><strong>Stand: 20.01.2026</strong></p>
+    </center>
   </div>
-
 
   <div id="quiz" class="hidden"></div>
 
   <div id="resultPage" class="hidden">
     <h3>Result: <span id="ampel" class="ampel"></span></h3>
     <div id="result"></div>
-
     <h4>Wrong answered questions:</h4>
     <ul id="wrongList"></ul>
-
-    <div id="protocol" class="hidden"></div>
+    <button class="btn" onclick="location.reload()">Back to Start</button>
   </div>
 </div>
 
 <script>
-
 /* --------------------------------------------------------
    QUIZ DATEN
 -------------------------------------------------------- */
-
-
 const quizPackages = [
   {
     name: "Quiz-Paket 1",
@@ -238,7 +228,7 @@ const quizPackages = [
       { q: "What should you do if you are unable to attend your shift due to illness?", options: ["Inform the security office at least 6 hours before your shift.", "Ask a colleague to cover for you without informing anyone.", "Contact the customer operator directly and let them know."], correct: 0, points: 2 },
       { q: "What must you do if you notice any unusual changes and/or irregularities at your booth during your shift?", options: ["Ignore it and continue observing.", "Report it immediately to an controlleur and/or the security office.", "Take a picture of the changes and send it to the customer."], correct: 1, points: 2 },
       { q: "What must you do if you're late for your shift?.", options: ["Contact the security office and explain the delay", "Report to the customer as soon as you arrive.", "Wait outside the booth until the customer notices."], correct: 0, points: 2 },
-           { q: "What clothes do I have to wear during my duty?", options: ["I can wear whatever I want, as long as it's comfortable.", "I must wear the prescribed security guard vest, with the black trousers, at all times.", "I can wear my own clothes as long as they’re black without the security guard vest."], correct: 1, points: 2 },
+      { q: "What clothes do I have to wear during my duty?", options: ["I can wear whatever I want, as long as it's comfortable.", "I must wear the prescribed security guard vest, with the black trousers, at all times.", "I can wear my own clothes as long as they’re black without the security guard vest."], correct: 1, points: 2 },
       { q: "What should you do if an authorized person (manager or customer) asks you to leave your post temporarily for a task, but you have not received confirmation from the security office?", options: ["Follow the instruction, as authorized personnel are always right.", "Politely explain that you must first call the security office for clearance before leaving your assigned post.", "Leave the post, but immediately call the security office once you are performing the new task."], correct: 1, points: 2 },
       { q: "Can you leave your position at the booth without being relieved by someone else?", options: ["Yes, you can leave anytime if there is no one around.", "No, you may only leave after informing the security office and sending pictures via email.", "Yes, but you must only notify the customer before leaving."], correct: 1, points: 2 },
       { q: "When can you use a laptop while on duty?", options: ["You can use them freely at any time.", "During the night shift (12:00 a.m. - 6:00 a.m.), as long as it doesn't interfere with your duties.", "Only during breaks."], correct: 1, points: 2 },
@@ -253,30 +243,28 @@ const quizPackages = [
       { q: "When do I need to bring back my documentation papers?", options: ["There is no deadline for submitting stand documentation.", "After your last day of work, as noted on your duty schedule, to keep accurate records. However, I can also return it voluntarily after each shift.", "On the last day of the month, as per the security guard procedure for submitting documents."], correct: 1, points: 5 }
     ]
   },
-
   {
-  name: "Quiz-Paket 2",
-  general: [
-    { q: "You are scheduled to work today, and your stand documentation lists the following location: 012/A80. Which hall should you report to for work?", options: ["If the first digit is “0” (meaningless), then the second digit is the hall number and the third digit is the floor number, i.e., Hall 1.2.", "The first digit is meaningless and the remaining two digits mean: Hall 12.. So, I need to guess the floor.", "It's Hall 0 on the 12th floor."], correct: 0, points: 2 },
-    { q: "When should I arrive at the booth?", options: ["10 minutes before the time stated on my duty schedule.", "20 minutes before the time stated on my duty schedule.", "Exactly the time that's on my duty schedule."], correct: 2, points: 2 },
-    { q: "How should the handover to the next employee be carried out properly?", options: ["There are three other employees who are coming to the same booth and will replace me, so I can hand over the booth to any of them.", "I hand it over to the person who is also named as the “next in line” on my stand documentation. If there is a mistake, I call the office.", "If I don't have time, I'll have someone else sign it and end my shift."], correct: 1, points: 2 },
-    { q: "Who is allowed to take products from the booth?", options: ["Anyone who wants something.", "Only people with a collection slip and proof of identity.", "Company friends are always allowed to take something."], correct: 1, points: 2 },
-    { q: "Who, apart from me, is allowed to be at the booth?", options: ["Only authorized persons, in particular company guests and customers.", "Authorized persons, in particular company guests and customers, but also my other colleagues who do not work at the booth.", "All authorized persons, in particular company guests and customers, my other colleagues who do not work at the booth, and private friends. "], correct: 0, points: 2 },
-    { q: "Who is an controller?", options: ["It is someone who is responsible for the booth builders.", "It is a person in authority whose instructions I must follow. The person in authority also checks that everything is in order at the booth. If I have any questions, I can also contact the person in authority.", "controllers are not persons with authority to give instructions, so I do not have to follow their instructions."], correct: 1, points: 2 },
-    { q: "Can I take items home with me from the exhibition grounds?", options: ["Yes, if they are inconspicuous items that no one will miss.", "No one is allowed to take items that do not belong to them.", "Yes, if the customer expressly allows me to do so."], correct: 1, points: 2 },
-    { q: "What happens if the stand documentation is not filled out correctly?", options: ["Filling it out incorrectly will not lead to any difficulties because it is not that important.", "If I fill it out incorrectly, I may receive a warning, which is not good for my reputation. It could also be that my wage payment is incorrect due to incorrect time entries.", "If this only happens occasionally, it should not be a significant problem."], correct: 1, points: 2 },
-    { q: "Am I permitted to use items from the booth?", options: ["I can use items that do not belong to me from the booth without any issues, provided that I return them to their original location.", "The use of items that do not belong to me from the booth is strictly prohibited, with no exceptions.", "I will ask the customer in advance if this is acceptable to them."], correct: 1, points: 2 },
-    { q: "If a dispute breaks out between the security workers, what should I do?", options: ["I get involved in the dispute because it also affects me.", "I just try to mediate; the office doesn't need to know about it.", "I try to mediate as long as I don't put myself in danger, but I definitely notify the office."], correct: 2, points: 2 }
-  ],
-  extra: [
-    { q: "How should I handle my stand documentation and then hand it in?", options: ["I should treat my stand documentation like a university transcript because it is a document. I should avoid stains, creases, or other damage. Above all, I should not fold the documentation.", "The stand documentation should only contain the correct information; everything else is not so important.", "I should treat my stand documentation like a university transcript because it is stand documentation. However, I can still lick, crease, or fold it."], correct: 0, points: 5 },
-    { q: "What should I do if I am on duty during a set-up or dismantling period (crash night)?", options: ["I arrive early to overcome any potential difficulties caused by missing labels and obstacles in good time.", "I don't worry about it because I assume that nothing unusual will happen.", "If I start my shift late, I don't see it as my responsibility."], correct: 0, points: 5 },
-    { q: "Who do I hold responsible if a train company is regularly late and I am therefore late?", options: ["I do not take responsibility, as the train company is responsible for the delays.", "I am responsible if the train company is late, as I can take this into account and act in advance. That's why I choose an earlier train so that I can start work on time.", "The company must accept that delays are a frequent occurrence. I consider them an excuse for my tardiness."], correct: 1, points: 5 },
-    { q: "What rule applies to the obligation to carry identification while at work?", options: ["I only have to carry identification with me if a check has been announced.", "I must carry my identification with me throughout my entire working hours and present it on request.", "I only need to bring my identification with me on my first day of work. "], correct: 1, points: 5 },
-    { q: "Can I go to the toilet without notification during my shift?", options: ["Yes, that is a fundamental right. I can leave the booth unattended for as long as I want.", "No, but I have to notify the office or, if an controller is currently on duty, let them know. This is necessary so that someone else can monitor my booth in my absence.", "I can leave the booth without any problems, even if I don't want to go to the toilet."], correct: 1, points: 5 }
-  ]
-},
-
+    name: "Quiz-Paket 2",
+    general: [
+      { q: "You are scheduled to work today, and your stand documentation lists the following location: 012/A80. Which hall should you report to for work?", options: ["If the first digit is “0” (meaningless), then the second digit is the hall number and the third digit is the floor number, i.e., Hall 1.2.", "The first digit is meaningless and the remaining two digits mean: Hall 12.. So, I need to guess the floor.", "It's Hall 0 on the 12th floor."], correct: 0, points: 2 },
+      { q: "When should I arrive at the booth?", options: ["10 minutes before the time stated on my duty schedule.", "20 minutes before the time stated on my duty schedule.", "Exactly the time that's on my duty schedule."], correct: 2, points: 2 },
+      { q: "How should the handover to the next employee be carried out properly?", options: ["There are three other employees who are coming to the same booth and will replace me, so I can hand over the booth to any of them.", "I hand it over to the person who is also named as the “next in line” on my stand documentation. If there is a mistake, I call the office.", "If I don't have time, I'll have someone else sign it and end my shift."], correct: 1, points: 2 },
+      { q: "Who is allowed to take products from the booth?", options: ["Anyone who wants something.", "Only people with a collection slip and proof of identity.", "Company friends are always allowed to take something."], correct: 1, points: 2 },
+      { q: "Who, apart from me, is allowed to be at the booth?", options: ["Only authorized persons, in particular company guests and customers.", "Authorized persons, in particular company guests and customers, but also my other colleagues who do not work at the booth.", "All authorized persons, in particular company guests and customers, my other colleagues who do not work at the booth, and private friends. "], correct: 0, points: 2 },
+      { q: "Who is an controller?", options: ["It is someone who is responsible for the booth builders.", "It is a person in authority whose instructions I must follow. The person in authority also checks that everything is in order at the booth. If I have any questions, I can also contact the person in authority.", "controllers are not persons with authority to give instructions, so I do not have to follow their instructions."], correct: 1, points: 2 },
+      { q: "Can I take items home with me from the exhibition grounds?", options: ["Yes, if they are inconspicuous items that no one will miss.", "No one is allowed to take items that do not belong to them.", "Yes, if the customer expressly allows me to do so."], correct: 1, points: 2 },
+      { q: "What happens if the stand documentation is not filled out correctly?", options: ["Filling it out incorrectly will not lead to any difficulties because it is not that important.", "If I fill it out incorrectly, I may receive a warning, which is not good for my reputation. It could also be that my wage payment is incorrect due to incorrect time entries.", "If this only happens occasionally, it should not be a significant problem."], correct: 1, points: 2 },
+      { q: "Am I permitted to use items from the booth?", options: ["I can use items that do not belong to me from the booth without any issues, provided that I return them to their original location.", "The use of items that do not belong to me from the booth is strictly prohibited, with no exceptions.", "I will ask the customer in advance if this is acceptable to them."], correct: 1, points: 2 },
+      { q: "If a dispute breaks out between the security workers, what should I do?", options: ["I get involved in the dispute because it also affects me.", "I just try to mediate; the office doesn't need to know about it.", "I try to mediate as long as I don't put myself in danger, but I definitely notify the office."], correct: 2, points: 2 }
+    ],
+    extra: [
+      { q: "How should I handle my stand documentation and then hand it in?", options: ["I should treat my stand documentation like a university transcript because it is a document. I should avoid stains, creases, or other damage. Above all, I should not fold the documentation.", "The stand documentation should only contain the correct information; everything else is not so important.", "I should treat my stand documentation like a university transcript because it is stand documentation. However, I can still lick, crease, or fold it."], correct: 0, points: 5 },
+      { q: "What should I do if I am on duty during a set-up or dismantling period (crash night)?", options: ["I arrive early to overcome any potential difficulties caused by missing labels and obstacles in good time.", "I don't worry about it because I assume that nothing unusual will happen.", "If I start my shift late, I don't see it as my responsibility."], correct: 0, points: 5 },
+      { q: "Who do I hold responsible if a train company is regularly late and I am therefore late?", options: ["I do not take responsibility, as the train company is responsible for the delays.", "I am responsible if the train company is late, as I can take this into account and act in advance. That's why I choose an earlier train so that I can start work on time.", "The company must accept that delays are a frequent occurrence. I consider them an excuse for my tardiness."], correct: 1, points: 5 },
+      { q: "What rule applies to the obligation to carry identification while at work?", options: ["I only have to carry identification with me if a check has been announced.", "I must carry my identification with me throughout my entire working hours and present it on request.", "I only need to bring my identification with me on my first day of work. "], correct: 1, points: 5 },
+      { q: "Can I go to the toilet without notification during my shift?", options: ["Yes, that is a fundamental right. I can leave the booth unattended for as long as I want.", "No, but I have to notify the office or, if an controller is currently on duty, let them know. This is necessary so that someone else can monitor my booth in my absence.", "I can leave the booth without any problems, even if I don't want to go to the toilet."], correct: 1, points: 5 }
+    ]
+  },
   {
     name: "Quiz-Paket 3",
     general: [
@@ -298,62 +286,34 @@ const quizPackages = [
       { q: "What should I do if I urgently need to use the restroom?", options: ["I go without telling anyone.", "I ask a stranger to watch my booth for a moment.", "I report to the security office and wait for a replacement."], correct: 2, points: 5 },
       { q: "Smoke develops at the booth or in the hall. What should I do?", options: ["There is a person in responsible who will take care of it.", "As long as it's just smoke, it's not a problem at all.", "Immediately report it to the security office."], correct: 2, points: 5 }
     ]
-
   }
 ];
-
 
 /* --------------------------------------------------------
    QUIZ LOGIK
 -------------------------------------------------------- */
-
 let startTime, userId, selectedPackage;
-
-document.getElementById('personalnummer').addEventListener("keypress", function(e){
-  if(e.key === "Enter") startQuiz();
-});
-
-document.addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-        // Nur Enter verwenden, wenn Login sichtbar ist
-        if (!document.getElementById("login").classList.contains("hidden")) {
-            startQuiz();
-        }
-    }
-});
 
 function toggleMode() {
   document.body.classList.toggle("dark");
 }
 
-
-document.getElementById("quizSelect").addEventListener("change", function() {
-    const pwContainer = document.getElementById("pwContainer");
-
-    if (this.value === "auto") {
-        pwContainer.style.display = "none";
-    } else {
-        pwContainer.style.display = "block";
-    }
-});
-
-
 function startQuiz() {
   userId = document.getElementById('personalnummer').value.trim();
-  if (!/^\d{5}$/.test(userId))
-      return alert("1. Your personnel number must be 5 digits long.\n\n2. Only numbers are allowed");
-	
-  document.getElementById('rules').style.display = 'none';
+  const password = document.getElementById('quizPassword').value.trim();
 
-  const selection = document.getElementById("quizSelect").value;
-
-  // Passwortschutz für alle außer random
-  if (selection !== "auto") {
-    const pwField = document.getElementById("quizPassword");
-    if (pwField.value.trim() !== "Accente") {
-        return alert("Wrong password!");
-    }
+  // 1. Validierung Personalnummer
+  if (!/^\d{5}$/.test(userId)) {
+      return alert("1. Your personnel number must be 5 digits long.\n2. Only numbers are allowed.");
   }
+
+  // 2. Passwort-Prüfung (neu eingefügt)
+  if (password !== "2025") {
+      return alert("Wrong password! Access denied.");
+  }
+
+  document.getElementById('rules').style.display = 'none';
+  const selection = document.getElementById("quizSelect").value;
 
   // Auswahl verarbeiten
   if (selection === "auto") {
@@ -363,15 +323,13 @@ function startQuiz() {
   }
 
   document.getElementById('login').classList.add('hidden');
-
   const quizDiv = document.getElementById('quiz');
   quizDiv.classList.remove('hidden');
   quizDiv.innerHTML = '';
 
   startTime = new Date();
-  const startDate = startTime.toLocaleDateString();
-  const startTimeString = startTime.toLocaleTimeString();
 
+  // General questions
   const generalDiv = document.createElement('div');
   generalDiv.className = 'quiz-section';
   generalDiv.innerHTML = `<h2>General questions</h2>`;
@@ -384,15 +342,16 @@ function startQuiz() {
   });
   quizDiv.appendChild(generalDiv);
 
+  // Extra questions
   const extraDiv = document.createElement('div');
   extraDiv.className = 'quiz-section extra-section';
   extraDiv.innerHTML = `<h2>Additional questions</h2>`;
   selectedPackage.extra.forEach((q,i)=>{
     const div = document.createElement('div');
+    const idx = i + selectedPackage.general.length;
     div.className = 'question';
-    div.innerHTML =
-      `<p><b>${i+1+selectedPackage.general.length}. ${q.q}</b></p>` +
-      q.options.map((opt,j)=>`<label><input type="radio" name="q${i+selectedPackage.general.length}" value="${j}"> ${opt}</label><br>`).join('');
+    div.innerHTML = `<p><b>${idx+1}. ${q.q}</b></p>` +
+      q.options.map((opt,j)=>`<label><input type="radio" name="q${idx}" value="${j}"> ${opt}</label><br>`).join('');
     extraDiv.appendChild(div);
   });
   quizDiv.appendChild(extraDiv);
@@ -404,64 +363,34 @@ function startQuiz() {
   quizDiv.appendChild(btn);
 }
 
-
-
 function submitQuiz() {
-
-   // ---------------------------------------------------
-  // PRÜFEN, OB ALLE FRAGEN BEANTWORTET WURDEN
-  // ---------------------------------------------------
   const allQuestions = [...selectedPackage.general, ...selectedPackage.extra];
   let unanswered = [];
 
-  // Alte Markierungen entfernen
   document.querySelectorAll(".question").forEach(q => {
     q.style.border = "";
     q.style.backgroundColor = "";
-    q.style.padding = "";
-    q.style.borderRadius = "";
   });
 
-  // Finde unbeantwortete Fragen
   allQuestions.forEach((q, i) => {
-    const selected = document.querySelector(`input[name="q${i}"]:checked`);
-    if (!selected) {
+    if (!document.querySelector(`input[name="q${i}"]:checked`)) {
       unanswered.push(i);
     }
   });
 
-  // Wenn etwas fehlt → Abgabe blockieren
   if (unanswered.length > 0) {
-
     unanswered.forEach(i => {
-      const block = document.querySelector(`input[name="q${i}"]`)
-        .closest(".question");
-
-      if (block) {
-        block.style.border = "2px solid var(--highlight-border)";
-        block.style.backgroundColor = "var(--highlight-bg)";
-        block.style.padding = "10px";
-        block.style.borderRadius = "8px";
-      }
+      const block = document.querySelector(`input[name="q${i}"]`).closest(".question");
+      block.style.border = "2px solid var(--highlight-border)";
+      block.style.backgroundColor = "var(--highlight-bg)";
     });
-
-    // Zur ersten fehlenden Frage scrollen
-    const firstMissing = document.querySelector(`input[name="q${unanswered[0]}"]`);
-    if (firstMissing) {
-      firstMissing.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-
     alert("You must answer ALL questions before you can submit the test❗");
     return;
   }
 
-  // ---------------------------------------------------
-  // NORMALER AUSWERTUNGSTEIL
-  // ---------------------------------------------------
-
   const endTime = new Date();
   const totalSeconds = Math.floor((endTime - startTime)/1000);
-  const benoetigteZeit = `${Math.floor(totalSeconds/60)} Minuten ${totalSeconds%60} Sekunden`;
+  const benoetigteZeit = `${Math.floor(totalSeconds/60)} Min ${totalSeconds%60} Sek`;
 
   let errorPoints = 0;
   const wrong = [];
@@ -469,16 +398,14 @@ function submitQuiz() {
 
   allQuestions.forEach((q,i)=>{
     const selected = document.querySelector(`input[name="q${i}"]:checked`);
-    const userAnswer = selected ? parseInt(selected.value) : null;
-
+    const userAnswer = parseInt(selected.value);
     answers.push({
       frage: q.q,
       korrekt: q.options[q.correct],
-      ausgewaehlt: userAnswer !== null ? q.options[userAnswer] : "Keine Antwort",
+      ausgewaehlt: q.options[userAnswer],
       status: userAnswer === q.correct ? "richtig" : "falsch",
       punkte: q.points
     });
-
     if(userAnswer !== q.correct){
       errorPoints += q.points;
       wrong.push(q.q);
@@ -486,7 +413,6 @@ function submitQuiz() {
   });
 
   const passed = errorPoints < 10;
-
   document.getElementById('quiz').classList.add('hidden');
   document.getElementById('resultPage').classList.remove('hidden');
 
@@ -498,20 +424,15 @@ function submitQuiz() {
     <p><strong>Error points:</strong> ${errorPoints}</p>
     <p><strong>Required time:</strong> ${benoetigteZeit}</p>
     <p><strong>Quiz package:</strong> ${selectedPackage.name}</p>
-  </div>
-  `;
+  </div>`;
 
   const wrongList = document.getElementById('wrongList');
   wrongList.innerHTML = '';
-  wrong.forEach(q=>{
+  wrong.forEach(q => {
     const li = document.createElement('li');
     li.textContent = q;
     wrongList.appendChild(li);
   });
-
-  // Startdatum und Startuhrzeit ermitteln
-  const startDate = startTime.toLocaleDateString();
-  const startTimeString = startTime.toLocaleTimeString();
 
   const log = {
     personalnummer: userId,
@@ -521,72 +442,36 @@ function submitQuiz() {
     quizPaket: selectedPackage.name,
     status: passed ? "Beboothen" : "Nicht beboothen",
     antworten: answers,
-    startDatum: startDate,
-    startUhrzeit: startTimeString,
+    startDatum: startTime.toLocaleDateString(),
+    startUhrzeit: startTime.toLocaleTimeString()
   };
 
   let allLogs = JSON.parse(localStorage.getItem('quizProtokoll') || '[]');
   allLogs.push(log);
-  localStorage.setItem('quizProtokoll', JSON.stringify(allLogs, null, 2));
+  localStorage.setItem('quizProtokoll', JSON.stringify(allLogs));
 }
 
-
-
-/* --------------------------------------------------------
-   XML EXPORT
--------------------------------------------------------- */
 function downloadXML() {
   const logs = JSON.parse(localStorage.getItem('quizProtokoll') || '[]');
-
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<quizProtokoll>\n`;
-
   logs.forEach(log => {
-    xml += `  <eintrag>\n`;
-    xml += `    <personalnummer>${log.personalnummer}</personalnummer>\n`;
-    xml += `    <fehlerpunkte>${log.fehlerpunkte}</fehlerpunkte>\n`;
-    xml += `    <status>${log.status}</status>\n`;
-    xml += `    <benoetigteZeit>${log.benoetigteZeit}</benoetigteZeit>\n`;
-    xml += `    <quizPaket>${log.quizPaket}</quizPaket>\n`;
-    xml += `    <startDatum>${log.startDatum}</startDatum>\n`; // Startdatum im XML hinzufügen
-    xml += `    <startUhrzeit>${log.startUhrzeit}</startUhrzeit>\n`; // Startuhrzeit im XML hinzufügen
-
-    xml += `    <antworten>\n`;
-    log.antworten.forEach(a => {
-      xml += `      <frageBlock>\n`;
-      xml += `        <frage>${a.frage}</frage>\n`;
-      xml += `        <korrekt>${a.korrekt}</korrekt>\n`;
-      xml += `        <ausgewaehlt>${a.ausgewaehlt}</ausgewaehlt>\n`;
-      xml += `        <status>${a.status}</status>\n`;
-      xml += `        <punkte>${a.punkte}</punkte>\n`;
-      xml += `      </frageBlock>\n`;
-    });
-    xml += `    </antworten>\n`;
-
-    xml += `  </eintrag>\n`;
+    xml += `  <eintrag>\n    <personalnummer>${log.personalnummer}</personalnummer>\n    <fehlerpunkte>${log.fehlerpunkte}</fehlerpunkte>\n    <status>${log.status}</status>\n    <benoetigteZeit>${log.benoetigteZeit}</benoetigteZeit>\n    <quizPaket>${log.quizPaket}</quizPaket>\n    <startDatum>${log.startDatum}</startDatum>\n    <startUhrzeit>${log.startUhrzeit}</startUhrzeit>\n  </eintrag>\n`;
   });
-
   xml += `</quizProtokoll>`;
-
   const blob = new Blob([xml], { type: 'application/xml' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
   a.download = 'quizProtokoll.xml';
   a.click();
-  URL.revokeObjectURL(url);
 }
-
-
 
 /* --------------------------------------------------------
    RESTRIKTIONEN
 -------------------------------------------------------- */
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('keydown', e => {
-  if (e.key === 'F12') e.preventDefault();
-  if ((e.ctrlKey && e.shiftKey && e.key === 'I') || 
-      (e.ctrlKey && e.shiftKey && e.key === 'J') || 
-      (e.ctrlKey && e.key === 'U'))
+  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'U'))
       e.preventDefault();
 });
 </script>
