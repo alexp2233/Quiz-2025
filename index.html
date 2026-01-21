@@ -184,7 +184,13 @@
 
 <script>
 /* --------------------------------------------------------
-   DATEN
+   EINSTELLUNGEN (PASSWÖRTER HIER ÄNDERN)
+-------------------------------------------------------- */
+const ACCESS_PASSWORD = "2025"; // Passwort für den Login
+const SUBMIT_PASSWORD = "2025"; // Passwort für das Absenden am Ende
+
+/* --------------------------------------------------------
+   QUIZ DATEN
 -------------------------------------------------------- */
 const quizPackages = [
   {
@@ -261,12 +267,13 @@ function toggleMode() { document.body.classList.toggle("dark"); }
 
 function startQuiz() {
   userId = document.getElementById('personalnummer').value.trim();
-  const password = document.getElementById('quizPassword').value.trim();
+  const passwordInput = document.getElementById('quizPassword').value.trim();
 
   if (!/^\d{5}$/.test(userId)) return alert("Personnel number must be 5 digits.");
-  if (password !== "2025") return alert("Wrong access password!");
+  
+  // VERWENDET DIE VARIABLE OBEN
+  if (passwordInput !== ACCESS_PASSWORD) return alert("Wrong access password!");
 
-  // Verstecke Login & Regeln
   document.getElementById('login').classList.add('hidden');
   document.getElementById('rules').classList.add('hidden');
 
@@ -279,43 +286,37 @@ function startQuiz() {
   quizDiv.classList.remove('hidden');
   quizDiv.innerHTML = '';
 
-  // Fragen generieren
   const allQs = [...selectedPackage.general, ...selectedPackage.extra];
-  
   allQs.forEach((q, i) => {
     const div = document.createElement('div');
     div.className = 'quiz-section question';
     if (i >= selectedPackage.general.length) div.classList.add('extra-section');
-    
     div.innerHTML = `<p><strong>${i+1}. ${q.q}</strong></p>` +
-      q.options.map((opt, j) => 
-        `<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label><br>`
-      ).join('');
+      q.options.map((opt, j) => `<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label><br>`).join('');
     quizDiv.appendChild(div);
   });
 
-  // Abschluss Passwort Bereich einblenden
   document.getElementById('finalStep').classList.remove('hidden');
   startTime = new Date();
   window.scrollTo(0,0);
 }
 
 function submitQuiz() {
-  // 1. Passwort Prüfung
-  if (document.getElementById('finalPassword').value.trim() !== "2025") {
+  const finalPwInput = document.getElementById('finalPassword').value.trim();
+  
+  // VERWENDET DIE VARIABLE OBEN
+  if (finalPwInput !== SUBMIT_PASSWORD) {
     return alert("Incorrect confirmation password!");
   }
 
   const allQuestions = [...selectedPackage.general, ...selectedPackage.extra];
   let unanswered = [];
 
-  // Reset Highlights
   document.querySelectorAll(".question").forEach(q => {
     q.style.border = "";
     q.style.backgroundColor = "";
   });
 
-  // Check unanswered
   allQuestions.forEach((q, i) => {
     if (!document.querySelector(`input[name="q${i}"]:checked`)) unanswered.push(i);
   });
@@ -329,33 +330,22 @@ function submitQuiz() {
     return alert("Answer all questions first!");
   }
 
-  // Auswertung
   const endTime = new Date();
   const totalSeconds = Math.floor((endTime - startTime)/1000);
   const duration = `${Math.floor(totalSeconds/60)} Min ${totalSeconds%60} Sek`;
 
   let errorPoints = 0;
   const wrong = [];
-  const detailedAnswers = [];
 
   allQuestions.forEach((q, i) => {
     const userAnswer = parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
-    const isCorrect = userAnswer === q.correct;
-    
-    detailedAnswers.push({
-      frage: q.q,
-      status: isCorrect ? "richtig" : "falsch"
-    });
-
-    if (!isCorrect) {
+    if (userAnswer !== q.correct) {
       errorPoints += q.points;
       wrong.push(q.q);
     }
   });
 
   const passed = errorPoints < 10;
-  
-  // Anzeige Results
   document.getElementById('quiz').classList.add('hidden');
   document.getElementById('finalStep').classList.add('hidden');
   document.getElementById('resultPage').classList.remove('hidden');
@@ -364,7 +354,6 @@ function submitQuiz() {
     <div id="resultBox" class="${passed ? "result-pass" : "result-fail"}">
       <h2>${passed ? "✔️ Passed" : "❌ Failed"}</h2>
       <p>Points: ${errorPoints} | Time: ${duration}</p>
-      <p>Package: ${selectedPackage.name}</p>
     </div>`;
 
   const wrongList = document.getElementById('wrongList');
@@ -375,14 +364,12 @@ function submitQuiz() {
     wrongList.appendChild(li);
   });
 
-  // Loggen
   let logs = JSON.parse(localStorage.getItem('quizProtokoll') || '[]');
   logs.push({
     personalnummer: userId,
     fehlerpunkte: errorPoints,
     benoetigteZeit: duration,
     status: passed ? "Beboothen" : "Nicht beboothen",
-    quizPaket: selectedPackage.name,
     datum: new Date().toLocaleString()
   });
   localStorage.setItem('quizProtokoll', JSON.stringify(logs));
@@ -392,7 +379,7 @@ function downloadXML() {
   const logs = JSON.parse(localStorage.getItem('quizProtokoll') || '[]');
   let xml = `<?xml version="1.0" encoding="UTF-8"?><quizProtokoll>`;
   logs.forEach(l => {
-    xml += `<eintrag><id>${l.personalnummer}</id><punkte>${l.fehlerpunkte}</punkte><status>${l.status}</status><zeit>${l.benoetigteZeit}</zeit></eintrag>`;
+    xml += `<eintrag><id>${l.personalnummer}</id><punkte>${l.fehlerpunkte}</punkte></eintrag>`;
   });
   xml += `</quizProtokoll>`;
   const blob = new Blob([xml], { type: 'application/xml' });
@@ -402,7 +389,6 @@ function downloadXML() {
   a.click();
 }
 
-// Sicherheit
 document.addEventListener('contextmenu', e => e.preventDefault());
 </script>
 </body>
