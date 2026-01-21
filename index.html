@@ -16,37 +16,28 @@
   }
 
   /* ---------------------------------------------------
-      HELL-MODUS
+      FARBSCHEMATA
   --------------------------------------------------- */
   :root {
     --highlight-border: #cc0000;
     --highlight-bg: #ffe6e6;	
-
     --bg: #fafafa;
     --text: #000;
     --box-bg: #fff;
-
     --pass-bg: #e8ffe8;
     --pass-border: #00b300;
-
     --fail-bg: #ffe8e8;
     --fail-border: #cc0000;
   }
 
-  /* ---------------------------------------------------
-      DARK-MODUS
-  --------------------------------------------------- */
   .dark {
     --highlight-border: #ff5757;
     --highlight-bg: #3b1f1f;
-
     --bg: #353f40;
     --text: #e6e6e6;
     --box-bg: #2a2a2a;
-
     --pass-bg: #1f3b1f;
     --pass-border: #00ff76;
-
     --fail-bg: #3b1f1f;
     --fail-border: #ff5757;
   }
@@ -73,24 +64,21 @@
     margin-top: 0;
   }
 
-  .extra-section {
-    border-color: #00a000 !important;
-  }
-  .extra-section h2 {
-    color: #00a000 !important;
-  }
+  .extra-section { border-color: #00a000 !important; }
+  .extra-section h2 { color: #00a000 !important; }
 
-  .question { margin-bottom: 15px; padding: 10px; border-radius: 5px; }
+  .question { margin-bottom: 15px; padding: 8px; border-radius: 5px; }
 
   .btn {
-    padding: 10px 20px;
+    padding: 12px 25px;
     border: none;
     border-radius: 8px;
     background: #0078d4;
     color: white;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 10px;
     font-weight: bold;
+    font-size: 1em;
   }
   .btn:hover { background: #005fa3; }
 
@@ -107,24 +95,15 @@
   }
 
   input[type="text"], input[type="password"], select {
-    padding: 8px;
+    padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    width: 200px;
+    width: 220px;
     background: var(--box-bg);
     color: var(--text);
   }
 
   #login { text-align: center; margin-bottom: 20px; }
-
-  .ampel {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-left: 10px;
-    vertical-align: middle;
-  }
 
   .hidden { display: none; }
 
@@ -137,21 +116,8 @@
     animation: fadeIn 0.6s ease-out;
   }
 
-  .result-pass {
-    background: var(--pass-bg);
-    border-left: 6px solid var(--pass-border);
-  }
-
-  .result-fail {
-    background: var(--fail-bg);
-    border-left: 6px solid var(--fail-border);
-  }
-
-  .result-icon {
-    font-size: 32px;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
+  .result-pass { background: var(--pass-bg); border-left: 6px solid var(--pass-border); }
+  .result-fail { background: var(--fail-bg); border-left: 6px solid var(--fail-border); }
 
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
@@ -168,10 +134,8 @@
 
   <div id="login">
     <label>Personnel number: </label><br>
-    <input type="text" id="personalnummer" maxlength="5" pattern="\d{5}" required placeholder="e.g. 12345">
-
+    <input type="text" id="personalnummer" maxlength="5" placeholder="e.g. 12345">
     <br><br>
-
     <label>Select quiz package:</label><br>
     <select id="quizSelect">
       <option value="auto">Automatically (randomly)</option>
@@ -179,39 +143,36 @@
       <option value="1">Quiz package 2</option>
       <option value="2">Quiz package 3</option>
     </select>
-
     <br><br>
-
-    <div id="pwContainer">
-      <label>Access Password:</label><br>
-      <input type="password" id="quizPassword" placeholder="Enter password" maxlength="20">
-    </div>
-
+    <label>Access Password:</label><br>
+    <input type="password" id="quizPassword" placeholder="Enter password">
+    <br>
     <button class="btn" onclick="startQuiz()">Go!</button>
-    <button id="devDownload" class="btn" style="position: fixed; bottom: 20px; right: 20px; font-size: 0.9em;" onclick="downloadXML()">📥 XML Export</button>
   </div>
 
   <div id="rules" class="quiz-section">
     <h2>Rules</h2>
-    <center>
+    <div style="text-align: center;">
       <p><strong>1. Each question can only be answered with one option.</strong></p>
-      <p>•</p>
-      <p><strong>2. When you have finished your test, you must report to your supervisor.</strong></p>
-      <p>•</p>
-      <p><strong>3. Taking photos of the questions or using your cell phone is prohibited.</strong></p>
-      <p>•</p>
-      <p><strong>4. It is forbidden to talk to other students during the test.</strong></p>
-      <p>•</p>
-      <p><strong>5. You must answer all questions to complete the test.</strong></p>
-      <p>•</p>
-      <p><strong>Stand: 20.01.2026</strong></p>
-    </center>
+      <p><strong>2. When finished, report to your supervisor.</strong></p>
+      <p><strong>3. Photos or cell phone use is prohibited.</strong></p>
+      <p><strong>4. Talking to others during the test is forbidden.</strong></p>
+      <p><strong>5. Answer all questions to complete.</strong></p>
+      <p><em>Stand: 20.01.2026</em></p>
+    </div>
   </div>
 
   <div id="quiz" class="hidden"></div>
 
+  <div id="finalStep" class="hidden quiz-section" style="text-align: center;">
+    <h2>Final Step</h2>
+    <p>Please enter the <strong>Confirmation Password</strong> to submit your test:</p>
+    <input type="password" id="finalPassword" placeholder="Confirmation Password">
+    <br><br>
+    <button class="btn" onclick="submitQuiz()">Submit Test</button>
+  </div>
+
   <div id="resultPage" class="hidden">
-    <h3>Result: <span id="ampel" class="ampel"></span></h3>
     <div id="result"></div>
     <h4>Wrong answered questions:</h4>
     <ul id="wrongList"></ul>
@@ -219,9 +180,11 @@
   </div>
 </div>
 
+<button id="devDownload" class="btn" style="position: fixed; bottom: 20px; right: 20px; font-size: 0.9em;" onclick="downloadXML()">📥 XML Export</button>
+
 <script>
 /* --------------------------------------------------------
-   QUIZ DATEN
+   DATEN
 -------------------------------------------------------- */
 const quizPackages = [
   {
@@ -292,164 +255,117 @@ const quizPackages = [
   }
 ];
 
-/* --------------------------------------------------------
-   QUIZ LOGIK
--------------------------------------------------------- */
 let startTime, userId, selectedPackage;
 
-function toggleMode() {
-  document.body.classList.toggle("dark");
-}
+function toggleMode() { document.body.classList.toggle("dark"); }
 
 function startQuiz() {
   userId = document.getElementById('personalnummer').value.trim();
   const password = document.getElementById('quizPassword').value.trim();
 
-  if (!/^\d{5}$/.test(userId)) {
-      return alert("1. Your personnel number must be 5 digits long.\n2. Only numbers are allowed.");
-  }
+  if (!/^\d{5}$/.test(userId)) return alert("Personnel number must be 5 digits.");
+  if (password !== "2025") return alert("Wrong access password!");
 
-  if (password !== "2025") {
-      return alert("Wrong password! Access denied.");
-  }
-
-  document.getElementById('rules').style.display = 'none';
-  const selection = document.getElementById("quizSelect").value;
-
-  if (selection === "auto") {
-    selectedPackage = quizPackages[Math.floor(Math.random() * quizPackages.length)];
-  } else {
-    selectedPackage = quizPackages[parseInt(selection)];
-  }
-
+  // Verstecke Login & Regeln
   document.getElementById('login').classList.add('hidden');
+  document.getElementById('rules').classList.add('hidden');
+
+  const selection = document.getElementById("quizSelect").value;
+  selectedPackage = (selection === "auto") 
+    ? quizPackages[Math.floor(Math.random() * quizPackages.length)] 
+    : quizPackages[parseInt(selection)];
+
   const quizDiv = document.getElementById('quiz');
   quizDiv.classList.remove('hidden');
   quizDiv.innerHTML = '';
 
-  startTime = new Date();
-
-  // General questions
-  const generalDiv = document.createElement('div');
-  generalDiv.className = 'quiz-section';
-  generalDiv.innerHTML = `<h2>General questions</h2>`;
-  selectedPackage.general.forEach((q,i)=>{
-    const div = document.createElement('div');
-    div.className = 'question';
-    div.innerHTML = `<p><b>${i+1}. ${q.q}</b></p>` +
-      q.options.map((opt,j)=>`<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label><br>`).join('');
-    generalDiv.appendChild(div);
-  });
-  quizDiv.appendChild(generalDiv);
-
-  // Extra questions
-  const extraDiv = document.createElement('div');
-  extraDiv.className = 'quiz-section extra-section';
-  extraDiv.innerHTML = `<h2>Additional questions</h2>`;
-  selectedPackage.extra.forEach((q,i)=>{
-    const div = document.createElement('div');
-    const idx = i + selectedPackage.general.length;
-    div.className = 'question';
-    div.innerHTML = `<p><b>${idx+1}. ${q.q}</b></p>` +
-      q.options.map((opt,j)=>`<label><input type="radio" name="q${idx}" value="${j}"> ${opt}</label><br>`).join('');
-    extraDiv.appendChild(div);
-  });
-  quizDiv.appendChild(extraDiv);
-
-  // --- NEU: ABSCHLUSS-PASSWORT BEREICH ---
-  const finalSection = document.createElement('div');
-  finalSection.className = 'quiz-section';
-  finalSection.style.textAlign = 'center';
-  finalSection.innerHTML = `
-    <h2>Final Step</h2>
-    <p>Please enter the <b>Confirmation Password</b> to submit your test:</p>
-    <input type="password" id="finalPassword" placeholder="Enter 2025" style="width: 250px;"><br>
-  `;
-
-  const btn = document.createElement('button');
-  btn.textContent = "Submit Test";
-  btn.className = 'btn';
-  btn.onclick = submitQuiz;
+  // Fragen generieren
+  const allQs = [...selectedPackage.general, ...selectedPackage.extra];
   
-  finalSection.appendChild(btn);
-  quizDiv.appendChild(finalSection);
+  allQs.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-section question';
+    if (i >= selectedPackage.general.length) div.classList.add('extra-section');
+    
+    div.innerHTML = `<p><strong>${i+1}. ${q.q}</strong></p>` +
+      q.options.map((opt, j) => 
+        `<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label><br>`
+      ).join('');
+    quizDiv.appendChild(div);
+  });
+
+  // Abschluss Passwort Bereich einblenden
+  document.getElementById('finalStep').classList.remove('hidden');
+  startTime = new Date();
+  window.scrollTo(0,0);
 }
 
 function submitQuiz() {
-  // 1. Check Abschluss-Passwort
-  const finalPw = document.getElementById('finalPassword').value.trim();
-  if (finalPw !== "2025") {
-    alert("Incorrect confirmation password! You cannot submit the test yet.");
-    return;
+  // 1. Passwort Prüfung
+  if (document.getElementById('finalPassword').value.trim() !== "2025") {
+    return alert("Incorrect confirmation password!");
   }
 
   const allQuestions = [...selectedPackage.general, ...selectedPackage.extra];
   let unanswered = [];
 
-  // Reset Styles
+  // Reset Highlights
   document.querySelectorAll(".question").forEach(q => {
     q.style.border = "";
     q.style.backgroundColor = "";
   });
 
-  // Check Unanswered
+  // Check unanswered
   allQuestions.forEach((q, i) => {
-    if (!document.querySelector(`input[name="q${i}"]:checked`)) {
-      unanswered.push(i);
-    }
+    if (!document.querySelector(`input[name="q${i}"]:checked`)) unanswered.push(i);
   });
 
   if (unanswered.length > 0) {
     unanswered.forEach(i => {
-      const inputs = document.getElementsByName(`q${i}`);
-      if(inputs.length > 0) {
-        const block = inputs[0].closest(".question");
-        block.style.border = "2px solid var(--highlight-border)";
-        block.style.backgroundColor = "var(--highlight-bg)";
-      }
+      const block = document.getElementsByName(`q${i}`)[0].closest(".question");
+      block.style.border = "3px solid var(--highlight-border)";
+      block.style.backgroundColor = "var(--highlight-bg)";
     });
-    alert("You must answer ALL questions before you can submit the test❗");
-    return;
+    return alert("Answer all questions first!");
   }
 
-  // Result Calculation
+  // Auswertung
   const endTime = new Date();
   const totalSeconds = Math.floor((endTime - startTime)/1000);
-  const benoetigteZeit = `${Math.floor(totalSeconds/60)} Min ${totalSeconds%60} Sek`;
+  const duration = `${Math.floor(totalSeconds/60)} Min ${totalSeconds%60} Sek`;
 
   let errorPoints = 0;
   const wrong = [];
-  const answers = [];
+  const detailedAnswers = [];
 
-  allQuestions.forEach((q,i)=>{
-    const selected = document.querySelector(`input[name="q${i}"]:checked`);
-    const userAnswer = parseInt(selected.value);
-    answers.push({
+  allQuestions.forEach((q, i) => {
+    const userAnswer = parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
+    const isCorrect = userAnswer === q.correct;
+    
+    detailedAnswers.push({
       frage: q.q,
-      korrekt: q.options[q.correct],
-      ausgewaehlt: q.options[userAnswer],
-      status: userAnswer === q.correct ? "richtig" : "falsch",
-      punkte: q.points
+      status: isCorrect ? "richtig" : "falsch"
     });
-    if(userAnswer !== q.correct){
+
+    if (!isCorrect) {
       errorPoints += q.points;
       wrong.push(q.q);
     }
   });
 
   const passed = errorPoints < 10;
+  
+  // Anzeige Results
   document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('finalStep').classList.add('hidden');
   document.getElementById('resultPage').classList.remove('hidden');
 
   document.getElementById('result').innerHTML = `
-  <div id="resultBox" class="${passed ? "result-pass" : "result-fail"}">
-    <span class="result-icon">${passed ? "✔️" : "❌"}</span>
-    <strong>${passed ? "Passed!" : "Failed!"}</strong>
-    <p><strong>Personnel number:</strong> ${userId}</p>
-    <p><strong>Error points:</strong> ${errorPoints}</p>
-    <p><strong>Required time:</strong> ${benoetigteZeit}</p>
-    <p><strong>Quiz package:</strong> ${selectedPackage.name}</p>
-  </div>`;
+    <div id="resultBox" class="${passed ? "result-pass" : "result-fail"}">
+      <h2>${passed ? "✔️ Passed" : "❌ Failed"}</h2>
+      <p>Points: ${errorPoints} | Time: ${duration}</p>
+      <p>Package: ${selectedPackage.name}</p>
+    </div>`;
 
   const wrongList = document.getElementById('wrongList');
   wrongList.innerHTML = '';
@@ -459,46 +375,35 @@ function submitQuiz() {
     wrongList.appendChild(li);
   });
 
-  const log = {
+  // Loggen
+  let logs = JSON.parse(localStorage.getItem('quizProtokoll') || '[]');
+  logs.push({
     personalnummer: userId,
     fehlerpunkte: errorPoints,
-    falsch: wrong,
-    benoetigteZeit,
-    quizPaket: selectedPackage.name,
+    benoetigteZeit: duration,
     status: passed ? "Beboothen" : "Nicht beboothen",
-    antworten: answers,
-    startDatum: startTime.toLocaleDateString(),
-    startUhrzeit: startTime.toLocaleTimeString()
-  };
-
-  let allLogs = JSON.parse(localStorage.getItem('quizProtokoll') || '[]');
-  allLogs.push(log);
-  localStorage.setItem('quizProtokoll', JSON.stringify(allLogs));
+    quizPaket: selectedPackage.name,
+    datum: new Date().toLocaleString()
+  });
+  localStorage.setItem('quizProtokoll', JSON.stringify(logs));
 }
 
 function downloadXML() {
   const logs = JSON.parse(localStorage.getItem('quizProtokoll') || '[]');
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<quizProtokoll>\n`;
-  logs.forEach(log => {
-    xml += `  <eintrag>\n    <personalnummer>${log.personalnummer}</personalnummer>\n    <fehlerpunkte>${log.fehlerpunkte}</fehlerpunkte>\n    <status>${log.status}</status>\n    <benoetigteZeit>${log.benoetigteZeit}</benoetigteZeit>\n    <quizPaket>${log.quizPaket}</quizPaket>\n    <startDatum>${log.startDatum}</startDatum>\n    <startUhrzeit>${log.startUhrzeit}</startUhrzeit>\n  </eintrag>\n`;
+  let xml = `<?xml version="1.0" encoding="UTF-8"?><quizProtokoll>`;
+  logs.forEach(l => {
+    xml += `<eintrag><id>${l.personalnummer}</id><punkte>${l.fehlerpunkte}</punkte><status>${l.status}</status><zeit>${l.benoetigteZeit}</zeit></eintrag>`;
   });
   xml += `</quizProtokoll>`;
   const blob = new Blob([xml], { type: 'application/xml' });
-  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = 'quizProtokoll.xml';
+  a.href = URL.createObjectURL(blob);
+  a.download = 'protocol.xml';
   a.click();
 }
 
-/* --------------------------------------------------------
-   RESTRIKTIONEN
--------------------------------------------------------- */
+// Sicherheit
 document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('keydown', e => {
-  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'U'))
-      e.preventDefault();
-});
 </script>
 </body>
 </html>
