@@ -16,7 +16,7 @@
   }
 
   /* ---------------------------------------------------
-     HELL-MODUS
+      HELL-MODUS
   --------------------------------------------------- */
   :root {
     --highlight-border: #cc0000;
@@ -34,7 +34,7 @@
   }
 
   /* ---------------------------------------------------
-     DARK-MODUS
+      DARK-MODUS
   --------------------------------------------------- */
   .dark {
     --highlight-border: #ff5757;
@@ -80,7 +80,7 @@
     color: #00a000 !important;
   }
 
-  .question { margin-bottom: 15px; }
+  .question { margin-bottom: 15px; padding: 10px; border-radius: 5px; }
 
   .btn {
     padding: 10px 20px;
@@ -90,6 +90,7 @@
     color: white;
     cursor: pointer;
     margin-top: 20px;
+    font-weight: bold;
   }
   .btn:hover { background: #005fa3; }
 
@@ -106,10 +107,12 @@
   }
 
   input[type="text"], input[type="password"], select {
-    padding: 6px;
+    padding: 8px;
     border-radius: 5px;
     border: 1px solid #ccc;
     width: 200px;
+    background: var(--box-bg);
+    color: var(--text);
   }
 
   #login { text-align: center; margin-bottom: 20px; }
@@ -302,12 +305,10 @@ function startQuiz() {
   userId = document.getElementById('personalnummer').value.trim();
   const password = document.getElementById('quizPassword').value.trim();
 
-  // 1. Validierung Personalnummer
   if (!/^\d{5}$/.test(userId)) {
       return alert("1. Your personnel number must be 5 digits long.\n2. Only numbers are allowed.");
   }
 
-  // 2. Passwort-Prüfung (neu eingefügt)
   if (password !== "2025") {
       return alert("Wrong password! Access denied.");
   }
@@ -315,7 +316,6 @@ function startQuiz() {
   document.getElementById('rules').style.display = 'none';
   const selection = document.getElementById("quizSelect").value;
 
-  // Auswahl verarbeiten
   if (selection === "auto") {
     selectedPackage = quizPackages[Math.floor(Math.random() * quizPackages.length)];
   } else {
@@ -356,22 +356,43 @@ function startQuiz() {
   });
   quizDiv.appendChild(extraDiv);
 
+  // --- NEU: ABSCHLUSS-PASSWORT BEREICH ---
+  const finalSection = document.createElement('div');
+  finalSection.className = 'quiz-section';
+  finalSection.style.textAlign = 'center';
+  finalSection.innerHTML = `
+    <h2>Final Step</h2>
+    <p>Please enter the <b>Confirmation Password</b> to submit your test:</p>
+    <input type="password" id="finalPassword" placeholder="Enter 2025" style="width: 250px;"><br>
+  `;
+
   const btn = document.createElement('button');
-  btn.textContent = "Submit";
+  btn.textContent = "Submit Test";
   btn.className = 'btn';
   btn.onclick = submitQuiz;
-  quizDiv.appendChild(btn);
+  
+  finalSection.appendChild(btn);
+  quizDiv.appendChild(finalSection);
 }
 
 function submitQuiz() {
+  // 1. Check Abschluss-Passwort
+  const finalPw = document.getElementById('finalPassword').value.trim();
+  if (finalPw !== "2025") {
+    alert("Incorrect confirmation password! You cannot submit the test yet.");
+    return;
+  }
+
   const allQuestions = [...selectedPackage.general, ...selectedPackage.extra];
   let unanswered = [];
 
+  // Reset Styles
   document.querySelectorAll(".question").forEach(q => {
     q.style.border = "";
     q.style.backgroundColor = "";
   });
 
+  // Check Unanswered
   allQuestions.forEach((q, i) => {
     if (!document.querySelector(`input[name="q${i}"]:checked`)) {
       unanswered.push(i);
@@ -380,14 +401,18 @@ function submitQuiz() {
 
   if (unanswered.length > 0) {
     unanswered.forEach(i => {
-      const block = document.querySelector(`input[name="q${i}"]`).closest(".question");
-      block.style.border = "2px solid var(--highlight-border)";
-      block.style.backgroundColor = "var(--highlight-bg)";
+      const inputs = document.getElementsByName(`q${i}`);
+      if(inputs.length > 0) {
+        const block = inputs[0].closest(".question");
+        block.style.border = "2px solid var(--highlight-border)";
+        block.style.backgroundColor = "var(--highlight-bg)";
+      }
     });
     alert("You must answer ALL questions before you can submit the test❗");
     return;
   }
 
+  // Result Calculation
   const endTime = new Date();
   const totalSeconds = Math.floor((endTime - startTime)/1000);
   const benoetigteZeit = `${Math.floor(totalSeconds/60)} Min ${totalSeconds%60} Sek`;
