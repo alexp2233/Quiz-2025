@@ -15,9 +15,6 @@
     justify-content: center;
   }
 
-  /* ---------------------------------------------------
-      FARBSCHEMATA
-  --------------------------------------------------- */
   :root {
     --highlight-border: #cc0000;
     --highlight-bg: #ffe6e6;	
@@ -133,9 +130,6 @@
   <h1>Security-Test</h1>
 
   <div id="login">
-    <label>Personnel number: </label><br>
-    <input type="text" id="personalnummer" maxlength="5" placeholder="e.g. 12345">
-    <br><br>
     <label>Select quiz package:</label><br>
     <select id="quizSelect">
       <option value="auto">Automatically (randomly)</option>
@@ -186,8 +180,8 @@
 /* --------------------------------------------------------
    EINSTELLUNGEN (PASSWÖRTER HIER ÄNDERN)
 -------------------------------------------------------- */
-const ACCESS_PASSWORD = "0122"; // Passwort für den Login
-const SUBMIT_PASSWORD = "4755"; // Passwort für das Absenden am Ende
+const ACCESS_PASSWORD = "0122"; 
+const SUBMIT_PASSWORD = "4755"; 
 
 /* --------------------------------------------------------
    QUIZ DATEN
@@ -261,17 +255,13 @@ const quizPackages = [
   }
 ];
 
-let startTime, userId, selectedPackage;
+let startTime, selectedPackage;
 
 function toggleMode() { document.body.classList.toggle("dark"); }
 
 function startQuiz() {
-  userId = document.getElementById('personalnummer').value.trim();
   const passwordInput = document.getElementById('quizPassword').value.trim();
 
-  if (!/^\d{5}$/.test(userId)) return alert("Personnel number must be 5 digits.");
-  
-  // VERWENDET DIE VARIABLE OBEN
   if (passwordInput !== ACCESS_PASSWORD) return alert("Wrong access password!");
 
   document.getElementById('login').classList.add('hidden');
@@ -304,7 +294,6 @@ function startQuiz() {
 function submitQuiz() {
   const finalPwInput = document.getElementById('finalPassword').value.trim();
   
-  // VERWENDET DIE VARIABLE OBEN
   if (finalPwInput !== SUBMIT_PASSWORD) {
     return alert("Incorrect confirmation password!");
   }
@@ -366,7 +355,6 @@ function submitQuiz() {
 
   let logs = JSON.parse(localStorage.getItem('quizProtokoll') || '[]');
   logs.push({
-    personalnummer: userId,
     fehlerpunkte: errorPoints,
     benoetigteZeit: duration,
     status: passed ? "Beboothen" : "Nicht beboothen",
@@ -379,7 +367,7 @@ function downloadXML() {
   const logs = JSON.parse(localStorage.getItem('quizProtokoll') || '[]');
   let xml = `<?xml version="1.0" encoding="UTF-8"?><quizProtokoll>`;
   logs.forEach(l => {
-    xml += `<eintrag><id>${l.personalnummer}</id><punkte>${l.fehlerpunkte}</punkte></eintrag>`;
+    xml += `<eintrag><datum>${l.datum}</datum><punkte>${l.fehlerpunkte}</punkte><status>${l.status}</status></eintrag>`;
   });
   xml += `</quizProtokoll>`;
   const blob = new Blob([xml], { type: 'application/xml' });
@@ -393,4 +381,3 @@ document.addEventListener('contextmenu', e => e.preventDefault());
 </script>
 </body>
 </html>
-
